@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAM109 IMX708 Camera | Complete User Guide</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2b;
+      --panel-2: #172036;
+      --text: #e8edf7;
+      --muted: #9fb0cc;
+      --line: #24314e;
+      --brand: #4da3ff;
+      --brand-2: #7cc4ff;
+      --ok: #123a2b;
+      --warn: #4a2b13;
+      --danger: #4a1d1d;
+      --code: #08101d;
+      --radius: 18px;
+      --shadow: 0 18px 50px rgba(0,0,0,.28);
+      --max: 1260px;
+      --sidebar: 280px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #08101b 0%, #0b1220 45%, #0e1627 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a { color: var(--brand-2); text-decoration: none; }
+    img { width: 100%; display: block; border-radius: 14px; }
+    code, pre { font-family: Consolas, Monaco, monospace; }
+
+    .layout {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: var(--sidebar) 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(10, 16, 28, .88);
+      backdrop-filter: blur(10px);
+      overflow: auto;
+    }
+
+    .brand {
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #10203d, #143665 58%, #2563eb);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .brand small {
+      color: #cfe3ff;
+      display: block;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .9;
+      margin-bottom: 8px;
+    }
+
+    .brand h1 {
+      font-size: 24px;
+      line-height: 1.15;
+      margin: 0 0 8px;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #dbe9ff;
+      font-size: 14px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .nav a {
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 14px;
+      border: 1px solid transparent;
+    }
+
+    .nav a:hover {
+      background: rgba(77, 163, 255, .08);
+      border-color: rgba(77, 163, 255, .18);
+    }
+
+    .main { padding: 28px; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 24px;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(77,163,255,.18), transparent 30%),
+        radial-gradient(circle at 85% 18%, rgba(124,196,255,.14), transparent 26%),
+        linear-gradient(135deg, #0e1729 0%, #13223b 60%, #18335b 100%);
+      border: 1px solid rgba(124,196,255,.16);
+      border-radius: 28px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #d7ebff;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.05);
+      margin-bottom: 12px;
+    }
+
+    .hero h2 {
+      font-size: 46px;
+      line-height: 1.1;
+      margin: 0 0 14px;
+    }
+
+    .hero p {
+      color: #d0dbef;
+      font-size: 18px;
+      margin: 0 0 18px;
+      max-width: 760px;
+    }
+
+    .hero-media {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      padding: 14px;
+      align-self: stretch;
+    }
+
+    .hero-media .caption {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+
+    .section { margin-top: 34px; }
+
+    .section h2 {
+      font-size: 30px;
+      margin: 0 0 8px;
+    }
+
+    .section .sub {
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 15px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .card p, .card li {
+      color: #d4dded;
+      font-size: 15px;
+    }
+
+    .image-card img { margin-bottom: 12px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .step {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .num {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2563eb, #4da3ff);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .notice {
+      padding: 16px 18px;
+      border-radius: 16px;
+      margin: 14px 0;
+      border: 1px solid transparent;
+    }
+
+    .notice.ok { background: var(--ok); border-color: #1d5e45; }
+    .notice.warn { background: var(--warn); border-color: #7b4a20; }
+    .notice.danger { background: var(--danger); border-color: #7b3434; }
+
+    .code {
+      background: var(--code);
+      border: 1px solid #182743;
+      border-radius: 16px;
+      padding: 16px 18px;
+      overflow: auto;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      box-shadow: var(--shadow);
+      color: #d9e6ff;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .spec-table th,
+    .spec-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .spec-table th {
+      width: 240px;
+      background: var(--panel-2);
+      color: #dce8fb;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .footer {
+      margin: 36px 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    ul {
+      margin: 10px 0;
+      padding-left: 18px;
+    }
+
+    .catalog-list li { margin-bottom: 6px; }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .hero { grid-template-columns: 1fr; }
+      .stats, .cards, .steps, .two-col { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .main { padding: 16px; }
+      .hero { padding: 22px; }
+      .hero h2 { font-size: 34px; }
+      .stats, .cards, .steps, .two-col { grid-template-columns: 1fr; }
+      .section h2 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <small>Complete User Guide</small>
+        <h1>CAM109 IMX708 Camera</h1>
+        <p>Full HTML manual for Raspberry Pi users, makers, and DIY projects</p>
+      </div>
+
+      <nav class="nav">
+        <a href="#overview">Overview</a>
+        <a href="#catalog">Contents</a>
+        <a href="#specs">Specifications</a>
+        <a href="#images">Structure & Connection</a>
+        <a href="#setup">Quick Setup</a>
+        <a href="#preview">Preview & Photos</a>
+        <a href="#video">Video Capture</a>
+        <a href="#focus">Autofocus & HDR</a>
+        <a href="#dual">Dual Camera on Pi 5</a>
+        <a href="#safety">Safety</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+
+      <!-- HERO -->
+      <section class="hero" id="overview">
+        <div>
+          <span class="eyebrow">PN: CAM109 · IMX708 · Raspberry Pi</span>
+          <h2>12MP IMX708 Camera for Raspberry Pi</h2>
+          <p>
+            This guide is based on the original CAM109 quick start manual, but rewritten in a clearer and more user-friendly way.
+            It keeps the original information while making setup and daily use easier to understand for DIY users.
+          </p>
+          <div class="stats">
+            <div class="stat"><strong>12MP</strong><span>Sony IMX708 CMOS</span></div>
+            <div class="stat"><strong>AF</strong><span>Autofocus support</span></div>
+            <div class="stat"><strong>HDR</strong><span>High dynamic range</span></div>
+            <div class="stat"><strong>1080p50</strong><span>Video capture</span></div>
+          </div>
+        </div>
+        <div class="hero-media">
+          <img src="./images/product-cover.jpg" alt="CAM109 product cover" />
+          <div class="caption">Released on March 20, 2026 · Version 1.0</div>
+        </div>
+      </section>
+
+      <!-- CATALOG -->
+      <section class="section" id="catalog">
+        <h2>Guide Contents</h2>
+        <p class="sub">This section follows the structure of the original manual so you can quickly find the part you need.</p>
+        <div class="card">
+          <ul class="catalog-list">
+            <li>Cover</li>
+            <li>Catalogue</li>
+            <li>Specification</li>
+            <li>Product structure drawing</li>
+            <li>Raspberry Pi 4B assembly drawing</li>
+            <li>Raspberry Pi 5B assembly drawing</li>
+            <li>Raspberry Pi Zero assembly drawing</li>
+            <li>Example: modify system config.txt</li>
+            <li>Raspberry Pi photo command</li>
+            <li>Raspberry Pi video command</li>
+            <li>Autofocus and high dynamic range</li>
+            <li>Raspberry Pi 5B binocular camera</li>
+            <li>Safety statement</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SPECS -->
+      <section class="section" id="specs">
+        <h2>Specifications</h2>
+        <p class="sub">
+          The table below preserves the key technical information from the original manual and adds clearer wording where helpful.
+        </p>
+        <table class="spec-table">
+          <tr><th>CMOS Sensor</th><td>Sony 12MP IMX708</td></tr>
+          <tr><th>Image Size</th><td>Diagonal 7.402 mm (Type 1/2.43)</td></tr>
+          <tr><th>Effective Pixels</th><td>4640 (H) × 2648 (V), approximately 12.29 MP</td></tr>
+          <tr><th>Active Pixels</th><td>4608 (H) × 2592 (V), approximately 11.94 MP</td></tr>
+          <tr><th>Chip Size</th><td>7.288 mm (H) × 4.930 mm (V)</td></tr>
+          <tr><th>Unit Cell Size</th><td>1.40 µm (H) × 1.40 µm (V)</td></tr>
+          <tr><th>Frame Rate</th><td>1080p50, 720p100, 480p120</td></tr>
+          <tr><th>Optical Format</th><td>1/2.43"</td></tr>
+          <tr><th>Focal Length</th><td>4.74 mm</td></tr>
+          <tr><th>F/NO</th><td>1.8</td></tr>
+          <tr><th>Angle of View</th><td>Diagonal 75°, Horizontal 66°, Vertical 41°</td></tr>
+          <tr><th>TV Distortion</th><td>&lt; 1%</td></tr>
+          <tr><th>Relative Illuminance</th><td>28%</td></tr>
+          <tr><th>Visible Light Camera</th><td>IR = 650</td></tr>
+          <tr><th>Interface</th><td>2-Lane MIPI</td></tr>
+          <tr><th>Dimensions</th><td>25 mm × 23.862 mm</td></tr>
+          <tr><th>Ribbon Cable Length</th><td>150 mm</td></tr>
+        </table>
+        <div class="notice ok">
+          <strong>Helpful note:</strong> In simple terms, this means the CAM109 offers high-resolution photos, autofocus support,
+          fast video modes, and a compact size suitable for Raspberry Pi projects.
+        </div>
+      </section>
+
+      <!-- STRUCTURE & CONNECTION -->
+      <section class="section" id="images">
+        <h2>Product Structure and Connection</h2>
+        <p class="sub">
+          The original manual includes one structure drawing and three installation drawings. These images help you connect the camera correctly to different Raspberry Pi boards.
+        </p>
+
+        <div class="cards">
+          <div class="card image-card">
+            <img src="./images/structure-drawing.jpg" alt="Product structure drawing" />
+            <h3>Product Structure Drawing</h3>
+            <p>
+              This diagram shows the physical size of the camera module, the mounting holes, and the lens position.
+              It is useful if you want to install the camera into a case, bracket, or custom project enclosure.
+            </p>
+          </div>
+
+          <div class="card image-card">
+            <img src="./images/pi4-assembly.jpg" alt="Raspberry Pi 4B assembly picture" />
+            <h3>Raspberry Pi 4B Assembly</h3>
+            <p>
+              This image shows how the camera ribbon cable connects to the CSI connector on Raspberry Pi 4B.
+              Make sure the ribbon cable is fully inserted and locked in place before turning on the board.
+            </p>
+          </div>
+
+          <div class="card image-card">
+            <img src="./images/pi5-assembly.jpg" alt="Raspberry Pi 5B assembly picture" />
+            <h3>Raspberry Pi 5B Assembly</h3>
+            <p>
+              Raspberry Pi 5 uses a different connector layout, so please follow this image carefully.
+              The cable orientation matters. Insert the cable gently and make sure the connector is locked after installation.
+            </p>
+          </div>
+
+          <div class="card image-card">
+            <img src="./images/pizero-assembly.jpg" alt="Raspberry Pi Zero assembly picture" />
+            <h3>Raspberry Pi Zero Assembly</h3>
+            <p>
+              Raspberry Pi Zero is smaller and more compact, so ribbon cable alignment is especially important.
+              Do not force the cable. If it does not slide in smoothly, check the direction again.
+            </p>
+          </div>
+
+          <div class="card image-card">
+            <img src="./images/config-terminal.jpg" alt="Config terminal screenshot" />
+            <h3>Terminal Setup Example</h3>
+            <p>
+              This screenshot shows what the Terminal should look like after the camera setup command is entered.
+              If your screen looks similar, you are on the right path.
+            </p>
+          </div>
+
+          <div class="card image-card">
+            <img src="./images/pi5-dual-camera-real.png" alt="Raspberry Pi 5 Camera 0 and Camera 1 ports" />
+            <h3>Pi 5 Dual Camera Ports</h3>
+            <p>
+              On Raspberry Pi 5, <strong>Camera 0</strong> is the default camera port and <strong>Camera 1</strong> is the second camera port.
+              When using two cameras, you must choose the correct camera number in your command.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICK SETUP -->
+      <section class="section" id="setup">
+        <h2>Quick Setup</h2>
+        <p class="sub">
+          The original manual makes an important point: this is a third-party camera module, not the official Raspberry Pi camera, so system settings must be changed before the camera will work.
+        </p>
+
+        <div class="notice danger">
+          <strong>Important:</strong> This camera is <strong>not plug-and-play</strong>.  
+          You must modify the system configuration before use.  
+          Otherwise, the camera may not light up.
+        </div>
+
+        <div class="notice warn">
+          <strong>System reminder:</strong> The original manual recommends using the latest Raspberry Pi system version.
+          It specifically mentions a system reference around <strong>2025-10-01 / Kernel 6.12</strong>.
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="num">1</div>
+            <h3>Connect the Camera</h3>
+            <p>Install the camera module on your Raspberry Pi and boot into the desktop or terminal environment.</p>
+          </div>
+
+          <div class="step">
+            <div class="num">2</div>
+            <h3>Modify config.txt</h3>
+            <p>Open Terminal and enter the setup command exactly as shown below.</p>
+          </div>
+
+          <div class="step">
+            <div class="num">3</div>
+            <h3>Restart and Test</h3>
+            <p>Reboot the system and run the preview command to confirm the camera is working.</p>
+          </div>
+        </div>
+
+        <div class="code">sudo echo -e "camera_auto_detect=0
+dtoverlay=imx708,cam0
+dtoverlay=imx708,cam1" | sudo tee -a /boot/firmware/config.txt</div>
+
+        <div style="height:12px"></div>
+        <div class="code">sudo reboot</div>
+
+        <div style="height:12px"></div>
+        <div class="code">sudo rpicam-hello</div>
+
+        <div class="notice ok">
+          <strong>Success check:</strong> You should see a camera preview window for about five seconds.
+        </div>
+      </section>
+
+      <!-- PREVIEW & PHOTO -->
+      <section class="section" id="preview">
+        <h2>Preview and Photo Capture</h2>
+        <p class="sub">
+          The original manual explains how to open the camera preview window and how to capture JPEG photos.
+        </p>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>Open the Preview Window</h3>
+            <p>Preview the camera feed continuously:</p>
+            <div class="code">sudo rpicam-hello -t 0</div>
+
+            <p>Preview in full screen:</p>
+            <div class="code">sudo rpicam-hello -f -t 0</div>
+
+            <p>
+              To close the preview window, press <strong>Alt + F4</strong> or click the close button.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Capture a JPEG Photo</h3>
+            <p>Capture a full-resolution JPEG image:</p>
+            <div class="code">sudo rpicam-jpeg -o test.jpg</div>
+
+            <p>
+              This command shows a short preview and then saves the image as <strong>test.jpg</strong>.
+            </p>
+
+            <p>Capture at 1080p resolution:</p>
+            <div class="code">sudo rpicam-jpeg -o test.jpg -t 2000 --width 1920 --height 1080</div>
+
+            <p>Capture at VGA resolution:</p>
+            <div class="code">sudo rpicam-jpeg -o test.jpg -t 2000 --width 640 --height 480</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIDEO -->
+      <section class="section" id="video">
+        <h2>Video Capture</h2>
+        <p class="sub">
+          For video recording, the manual uses <code>rpicam-vid</code>. The command opens a preview window and writes the video stream to an output file.
+        </p>
+
+        <div class="cards">
+          <div class="card">
+            <h3>Record a 10-second Video</h3>
+            <div class="code">sudo rpicam-vid -t 10000 -o test.h264</div>
+            <p>This records a 10-second video and saves it as <strong>test.h264</strong>.</p>
+          </div>
+
+          <div class="card">
+            <h3>Record 1080p Video</h3>
+            <div class="code">sudo rpicam-vid --width 1920 --height 1080 -o full_hd.h264</div>
+            <p>Use this mode for Full HD recording.</p>
+          </div>
+
+          <div class="card">
+            <h3>Record 720p at 50fps</h3>
+            <div class="code">sudo rpicam-vid --width 1280 --height 720 --framerate 50 -o 50fps.h264</div>
+            <p>Use this mode for smoother motion and faster-moving subjects.</p>
+          </div>
+        </div>
+
+        <div class="notice ok">
+          <strong>Good to know:</strong> The original manual notes that 1920 × 1080 should be treated as the largest standard video resolution unless otherwise stated.
+        </div>
+      </section>
+
+      <!-- AUTOFOCUS & HDR -->
+      <section class="section" id="focus">
+        <h2>Autofocus and HDR Imaging</h2>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>Autofocus</h3>
+            <p>
+              When using the IMX708 camera module, autofocus is enabled automatically in continuous mode.
+              The lens will move as needed to keep the center of the image in focus.
+            </p>
+            <p>
+              You can also disable autofocus and set the focus manually by using <code>--lens-position</code>.
+              The value is measured in dioptres, which is the reciprocal of the focus distance.
+            </p>
+            <ul>
+              <li>Focus at about 0.1 m → use value <strong>10</strong></li>
+              <li>Focus at infinity → use value <strong>0</strong></li>
+            </ul>
+            <p>Example:</p>
+            <div class="code">sudo rpicam-vid --lens-position 0.5 -o 2_metres.h264</div>
+            <p>This sets focus to about two metres and keeps the lens fixed there.</p>
+          </div>
+
+          <div class="card">
+            <h3>High Dynamic Range (HDR)</h3>
+            <p>
+              HDR helps improve image quality in scenes with strong differences between bright and dark areas.
+            </p>
+            <p>Example:</p>
+            <div class="code">sudo rpicam-vid --hdr -o hdr.h264</div>
+            <p>
+              The original manual explains that non-HDR capture can go up to <strong>4608 × 2592</strong>,
+              but HDR capture is limited to <strong>2304 × 1296</strong>.
+              H.264 video files are limited to <strong>1920 × 1080</strong>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DUAL CAMERA -->
+      <section class="section" id="dual">
+        <h2>Dual Camera Support on Raspberry Pi 5</h2>
+        <p class="sub">
+          Raspberry Pi 5 supports two cameras. When testing, you must specify which camera to use. Without this parameter, <code>cam0</code> is selected by default.
+        </p>
+
+        <div class="code">sudo rpicam-hello -t 0 --camera 0
+sudo rpicam-hello -t 0 --camera 1</div>
+
+        <div class="notice warn">
+          <strong>Tip:</strong> To run two cameras, open two Terminal windows and run one camera command in each window.
+        </div>
+      </section>
+
+      <!-- SAFETY -->
+      <section class="section" id="safety">
+        <h2>Safety Instructions</h2>
+        <p class="sub">
+          The points below preserve the safety guidance from the original manual, rewritten in a clearer format.
+        </p>
+
+        <div class="cards">
+          <div class="card">
+            <h3>Before You Connect</h3>
+            <ul>
+              <li>Shut down your Raspberry Pi completely before connecting the camera.</li>
+              <li>Disconnect the board from external power before installation.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Ribbon Cable Handling</h3>
+            <ul>
+              <li>If the cable comes loose, pull the locking tab forward first.</li>
+              <li>Insert the ribbon cable with the metal contacts facing the circuit board.</li>
+              <li>Push the locking tab back into place after inserting the cable.</li>
+              <li>Do not fold, twist, or strain the ribbon cable.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Environment and Storage</h3>
+            <ul>
+              <li>Operate the camera in a dry environment between 0–50°C.</li>
+              <li>Do not expose the module to water or moisture.</li>
+              <li>Do not place it on a conductive surface while in use.</li>
+              <li>Store the device in a cool, dry location.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="notice danger">
+          <strong>Handle with care:</strong> Avoid mechanical or electrical damage to the printed circuit board, connectors, and ribbon cable.
+        </div>
+      </section>
+
+      <div class="footer">
+        This HTML guide is rebuilt from the original CAM109 12MP IMX708 Quick Start Guide and expanded for easier reading, clearer setup, and a better consumer experience.
+      </div>
+
+    </main>
+  </div>
+</body>
+</html>
